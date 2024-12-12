@@ -1,2 +1,3 @@
 1. pip3 install streamlit
-2. streamlit run Hello.py
+2. pip3 install pandas
+3. streamlit run Hello.py
