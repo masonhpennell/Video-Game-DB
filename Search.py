@@ -4,75 +4,115 @@ import pandas as pd
 
 if "initialized" not in st.session_state:
     st.session_state.initialized = True
-    # conn = mysql.connector.connect(
-    #             host = 'localhost',
-    #             user = 'root',
-    #             password = 'mason918'
-    #         )
-    # cursor = conn.cursor()
+    conn = mysql.connector.connect(
+                host = 'localhost',
+                user = 'root',
+                password = 'mason918'
+            )
+    cursor = conn.cursor()
 
-    # cursor.execute("CREATE SCHEMA IF NOT EXISTS VideoGames;")
+    cursor.execute("CREATE SCHEMA IF NOT EXISTS VideoGames;")
 
+    conn = mysql.connector.connect(
+                host = 'localhost',
+                user = 'root',
+                password = 'mason918',
+                database = 'VideoGames'
+            )
+    cursor = conn.cursor()
+    
+    cursor.execute('''
+            CREATE TABLE IF NOT EXISTS game(
+                gameID INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+                rating FLOAT(3, 2) NOT NULL,
+                genre VARCHAR(50),
+                title VARCHAR(50) NOT NULL,
+                developerID INT NOT NULL,
+                storeID INT NOT NULL,
+                publisherID INT NOT NULL
+            );
+        ''')
+    
+    cursor.execute('''
+            CREATE TABLE IF NOT EXISTS developer(
+                developerID INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+                name VARCHAR(255) NOT NULL
+            );
+        ''')
+    
+    cursor.execute('''
+            CREATE TABLE IF NOT EXISTS publisher(
+                publisherID INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+                name VARCHAR(255) NOT NULL
+            );
+        ''')
+    
+    cursor.execute('''
+            INSERT INTO developer (name) VALUES
+                ('Naughty Dog'),
+                ('Rockstar Games'),
+                ('Blizzard Entertainment'),
+                ('CD Projekt Red'),
+                ('Bethesda Game Studios');
+            ''')
+    
+    cursor.execute('''
+            INSERT INTO publisher (name) VALUES
+                ('Sony Interactive Entertainment'),
+                ('Take-Two Interactive'),
+                ('Activision Blizzard'),
+                ('CD Projekt'),
+                ('Bethesda Softworks');
+            ''')
+    
+    cursor.execute('''
+            INSERT INTO game (rating, genre, title, developerID, storeID, publisherID) VALUES
+                (9.5, 'Action-Adventure', 'The Last of Us Part II', 1, 1, 1),
+                (9.7, 'Open World', 'Red Dead Redemption 2', 2, 2, 2),
+                (9.3, 'RPG', 'The Witcher 3: Wild Hunt', 4, 3, 4),
+                (9.0, 'FPS', 'DOOM Eternal', 5, 4, 5),
+                (8.8, 'MOBA', 'Overwatch', 3, 5, 3);
+            ''')
+    
+    conn.commit()
+    
 st.session_state['conn'] = mysql.connector.connect(
             host = 'localhost',
             user = 'root',
             password = 'mason918',
-            database = 'sakila'
+            database = 'VideoGames'
         )
 st.session_state['cursor'] = st.session_state['conn'].cursor()
 conn = st.session_state['conn']
 cursor = st.session_state['cursor']
+st.title("Search for a game")
 
-st.title("Search for a movie")
+title = st.text_input("Game Title")
 
-title = st.text_input("Movie title")
+cursor.execute("SELECT name FROM developer;")
+developers = [d for (d,) in cursor.fetchall()]
+cursor.execute("SELECT name FROM publisher;")
+publishers = [p for (p,) in cursor.fetchall()]
+developer = st.radio("Developer", developers, horizontal=True)
+publisher = st.radio("Publisher", publishers, horizontal=True)
 
-developer = st.radio("Developer", ['Nintendo', 'Sega', 'Sony', 'Microsoft'], horizontal=True)
-publisher = st.radio("Publisher", ['Nintendo', 'Sega', 'Sony', 'Microsoft'], horizontal=True)
-
-cursor.execute(f"SELECT title FROM film WHERE title LIKE '{title}%';")
+cursor.execute(f'''
+               SELECT title
+               FROM game
+               WHERE title LIKE '{title}%' AND developerID in (
+                   SELECT developerID
+                   FROM developer
+                   WHERE name = '{developer}'
+               ) AND publisherID in (
+                   SELECT publisherID
+                   FROM publisher
+                   WHERE name = '{publisher}'
+              );
+               ''')
 data = cursor.fetchall()
 df = pd.DataFrame(data, columns=cursor.column_names)
 st.dataframe(df)
 
-    
-# # Connect to MySQL server (make sure MySQL server is running)
-# db_connection = mysql.connector.connect(
-#     host='localhost',
-#     user='root',
-#     password='mason918'
-# )
-
-# db_cursor = db_connection.cursor()
-
-# # Create a database
-# db_cursor.execute("CREATE DATABASE IF NOT EXISTS VideoGames")
-
-# # Select the database
-# db_cursor.execute("USE VideoGames")
-
-# # Create a table
-# db_cursor.execute("""
-# CREATE TABLE IF NOT EXISTS games (
-#     gameID INTEGER AUTO_INCREMENT NOT NULL PRIMARY KEY,
-#     Title VARCHAR(50) NOT NULL,
-#     Genre VARCHAR(50) NOT NULL
-# );
-# """)
-
-# # Insert data
-# db_cursor.execute("INSERT INTO games (title, genre) VALUES ('Mario', 'Platformer')")
-# db_cursor.execute("INSERT INTO games (title, genre) VALUES ('Zelda', 'Adventure')")
-# db_cursor.execute("INSERT INTO games (title, genre) VALUES ('Pokemon', 'RPG')")
-
-# # Commit the changes
-# db_connection.commit()
-
-# # Retrieve data
-# db_cursor.execute("SELECT * FROM games")
-# result = db_cursor.fetchall()
-
-# # Close the connection
 # db_cursor.close()
 # db_connection.close()
 
