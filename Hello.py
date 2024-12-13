@@ -99,3 +99,5 @@ st.session_state['conn'] = mysql.connector.connect(
 st.session_state['cursor'] = st.session_state['conn'].cursor()
 
 st.title("Welcome to our Video Game Database!")
+st.subheader("Click the links on the right to navigate the site.")
+st.image("image.jpg", use_container_width=True)

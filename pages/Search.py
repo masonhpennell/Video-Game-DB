@@ -15,9 +15,10 @@ cursor.execute("SELECT name FROM publisher;")
 publishers = [p for (p,) in cursor.fetchall()]
 developer = st.radio("Developer", developers, horizontal=True)
 publisher = st.radio("Publisher", publishers, horizontal=True)
+min = st.slider("Minimum Rating", 0.0, 10.0, 0.0, 0.1)
 
 cursor.execute(f'''
-               SELECT title
+               SELECT title, rating
                FROM game
                WHERE title LIKE '{title}%' AND developerID in (
                    SELECT developerID
@@ -27,7 +28,7 @@ cursor.execute(f'''
                    SELECT publisherID
                    FROM publisher
                    WHERE name = '{publisher}'
-              );
+               ) AND rating >= {min};
                ''')
 data = cursor.fetchall()
 df = pd.DataFrame(data, columns=cursor.column_names)
