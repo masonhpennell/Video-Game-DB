@@ -47,6 +47,23 @@ def create_tables():
             );
         ''')
     
+    cursor.execute('''
+            CREATE TABLE IF NOT EXISTS user(
+                userID INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+                name VARCHAR(255) NOT NULL,
+                password VARCHAR(255) NOT NULL
+            );
+        ''')
+    
+    cursor.execute('''
+            CREATE TABLE IF NOT EXISTS store(
+                storeID INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+                name VARCHAR(255) NOT NULL,
+                city VARCHAR(255) NOT NULL,
+                gameID INT NOT NULL
+            );
+        ''')
+    
     populate_tables('game', cursor)
     populate_tables('developer', cursor)
     populate_tables('publisher', cursor)
@@ -80,3 +97,5 @@ st.session_state['conn'] = mysql.connector.connect(
             database = 'VideoGames'
         )
 st.session_state['cursor'] = st.session_state['conn'].cursor()
+
+st.title("Welcome to our Video Game Database!")
