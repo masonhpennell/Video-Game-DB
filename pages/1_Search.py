@@ -1,4 +1,3 @@
-import mysql.connector
 import streamlit as st
 import pandas as pd
 
@@ -33,11 +32,3 @@ cursor.execute(f'''
 data = cursor.fetchall()
 df = pd.DataFrame(data, columns=cursor.column_names)
 st.table(df)
-
-# db_cursor.close()
-# db_connection.close()
-
-# # Display data using Streamlit
-# st.title('User Data')
-# for row in result:
-#     st.write(f"ID: {row[0]}, Name: {row[1]}, Age: {row[2]}")

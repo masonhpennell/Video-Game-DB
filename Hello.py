@@ -1,6 +1,5 @@
 import mysql.connector
 import streamlit as st
-import pandas as pd
 from helper import helper
 
 def create_tables():
@@ -29,7 +28,8 @@ def create_tables():
                 title VARCHAR(50) NOT NULL,
                 developerID INT NOT NULL,
                 storeID INT NOT NULL,
-                publisherID INT NOT NULL
+                publisherID INT NOT NULL,
+                isDeleted BOOLEAN DEFAULT FALSE
             );
         ''')
     
@@ -59,7 +59,7 @@ def create_tables():
             CREATE TABLE IF NOT EXISTS store(
                 storeID INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
                 name VARCHAR(255) NOT NULL,
-                city VARCHAR(255) NOT NULL,
+                location VARCHAR(255) NOT NULL,
                 gameID INT NOT NULL
             );
         ''')
