@@ -36,14 +36,16 @@ def create_tables():
     cursor.execute('''
             CREATE TABLE IF NOT EXISTS developer(
                 developerID INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
-                name VARCHAR(255) NOT NULL
+                name VARCHAR(255) NOT NULL,
+                location VARCHAR(255) NOT NULL
             );
         ''')
     
     cursor.execute('''
             CREATE TABLE IF NOT EXISTS publisher(
                 publisherID INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
-                name VARCHAR(255) NOT NULL
+                name VARCHAR(255) NOT NULL,
+                location VARCHAR(255) NOT NULL
             );
         ''')
     
@@ -58,15 +60,37 @@ def create_tables():
     cursor.execute('''
             CREATE TABLE IF NOT EXISTS store(
                 storeID INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
-                name VARCHAR(255) NOT NULL,
-                location VARCHAR(255) NOT NULL,
-                gameID INT NOT NULL
+                location VARCHAR(255) NOT NULL
             );
         ''')
     
-    populate_tables('game', cursor)
-    populate_tables('developer', cursor)
-    populate_tables('publisher', cursor)
+    # populate_tables('game', cursor)
+    # populate_tables('developer', cursor)
+    # populate_tables('publisher', cursor)
+    # populate_tables('store', cursor)
+    populate_tables('user', cursor)
+    
+    cursor.execute('''
+            CREATE OR REPLACE VIEW GameView AS
+            SELECT 
+                g.Title, 
+                g.Genre, 
+                g.Rating, 
+                d.Name AS Developer, 
+                p.Name AS Publisher, 
+                s.Location AS Store
+            FROM 
+                Game g
+            JOIN 
+                Developer d ON g.DeveloperID = d.DeveloperID
+            JOIN 
+                Publisher p ON g.PublisherID = p.PublisherID
+            JOIN 
+                Store s ON g.StoreID = s.StoreID
+            WHERE 
+                g.IsDeleted = 0;
+        ''')
+    
     conn.commit()
     
 def is_empty(table, cursor):
