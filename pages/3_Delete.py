@@ -10,7 +10,9 @@ cursor.execute('SELECT COUNT(*) FROM game;')
 max = cursor.fetchone()[0]
 id = st.number_input("Enter game ID", 0, max, 0, 1)
 if (st.button("Delete this game?")):
+    cursor.execute("START TRANSACTION;")
     cursor.execute(f"UPDATE game SET isDeleted = 1 WHERE gameID = {id};")
+    cursor.execute("COMMIT;")
     conn.commit()
 
 deleted = st.checkbox("Show deleted games")
