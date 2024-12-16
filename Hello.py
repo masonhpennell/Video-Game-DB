@@ -1,12 +1,14 @@
 import mysql.connector
 import streamlit as st
+import bcrypt
 from helper import helper
+
 
 def create_tables():
     conn = mysql.connector.connect(
                 host = 'localhost',
                 user = 'root',
-                password = 'mason918'
+                password = 'Pps623432'
             )
     cursor = conn.cursor()
 
@@ -15,7 +17,7 @@ def create_tables():
     conn = mysql.connector.connect(
                 host = 'localhost',
                 user = 'root',
-                password = 'mason918',
+                password = 'Pps623432',
                 database = 'VideoGames'
             )
     cursor = conn.cursor()
@@ -36,16 +38,14 @@ def create_tables():
     cursor.execute('''
             CREATE TABLE IF NOT EXISTS developer(
                 developerID INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
-                name VARCHAR(255) NOT NULL,
-                location VARCHAR(255) NOT NULL
+                name VARCHAR(255) NOT NULL
             );
         ''')
     
     cursor.execute('''
             CREATE TABLE IF NOT EXISTS publisher(
                 publisherID INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
-                name VARCHAR(255) NOT NULL,
-                location VARCHAR(255) NOT NULL
+                name VARCHAR(255) NOT NULL
             );
         ''')
     
@@ -60,37 +60,15 @@ def create_tables():
     cursor.execute('''
             CREATE TABLE IF NOT EXISTS store(
                 storeID INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
-                location VARCHAR(255) NOT NULL
+                name VARCHAR(255) NOT NULL,
+                location VARCHAR(255) NOT NULL,
+                gameID INT NOT NULL
             );
         ''')
     
-    # populate_tables('game', cursor)
-    # populate_tables('developer', cursor)
-    # populate_tables('publisher', cursor)
-    # populate_tables('store', cursor)
-    populate_tables('user', cursor)
-    
-    cursor.execute('''
-            CREATE OR REPLACE VIEW GameView AS
-            SELECT 
-                g.Title, 
-                g.Genre, 
-                g.Rating, 
-                d.Name AS Developer, 
-                p.Name AS Publisher, 
-                s.Location AS Store
-            FROM 
-                Game g
-            JOIN 
-                Developer d ON g.DeveloperID = d.DeveloperID
-            JOIN 
-                Publisher p ON g.PublisherID = p.PublisherID
-            JOIN 
-                Store s ON g.StoreID = s.StoreID
-            WHERE 
-                g.IsDeleted = 0;
-        ''')
-    
+    populate_tables('game', cursor)
+    populate_tables('developer', cursor)
+    populate_tables('publisher', cursor)
     conn.commit()
     
 def is_empty(table, cursor):
@@ -117,11 +95,29 @@ if "initialized" not in st.session_state:
 st.session_state['conn'] = mysql.connector.connect(
             host = 'localhost',
             user = 'root',
-            password = 'mason918',
+            password = 'Pps623432',
             database = 'VideoGames'
         )
 st.session_state['cursor'] = st.session_state['conn'].cursor()
 
 st.title("Welcome to our Video Game Database!")
-st.subheader("Click the links on the right to navigate the site.")
+st.subheader("Click the link on the right to Log into the site.")
 st.image("image.jpg", use_container_width=True)
+
+def populate_tables(name, cursor):
+    if is_empty(name, cursor):
+        data = helper.data_cleaner(f"data/{name}.csv")
+        attribute_count = len(data[0])
+        placeholders = (f"%s,"*attribute_count)[:-1]
+        query = f"INSERT INTO {name} VALUES("+placeholders+")"
+        cursor.executemany(query, data)
+
+    # Add admin user to 'user' table (if empty)
+    if name == "user":
+        if is_empty("user", cursor):
+            password = "admin123"
+            hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+            cursor.execute(
+                "INSERT INTO user (name, password) VALUES (%s, %s);",
+                ("admin", hashed_password)
+            )
