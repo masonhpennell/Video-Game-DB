@@ -15,6 +15,7 @@ developer = st.radio("Developer", developers, horizontal=True)
 publisher = st.radio("Publisher", publishers, horizontal=True)
 min = st.slider("Minimum Rating", 0.0, 10.0, 0.0, 0.1)
 
+#One query must contain a subquery
 cursor.execute(f'''
                SELECT title, rating
                FROM game

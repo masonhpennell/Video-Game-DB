@@ -6,10 +6,12 @@ cursor = st.session_state['cursor']
 
 st.title("Delete a game")
 
+#Aggregate function
 cursor.execute('SELECT COUNT(*) FROM game;')
 max = cursor.fetchone()[0]
 id = st.number_input("Enter game ID", 0, max, 0, 1)
 if (st.button("Delete this game?")):
+    #Make ue of transactions
     cursor.execute("START TRANSACTION;")
     cursor.execute(f"UPDATE game SET isDeleted = 1 WHERE gameID = {id};")
     cursor.execute("COMMIT;")

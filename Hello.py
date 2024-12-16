@@ -70,6 +70,8 @@ def create_tables():
     populate_tables('store', cursor)
     populate_tables('user', cursor)
     
+    #Inlude Database Views
+    #Joins across multiple tables
     cursor.execute('''
             CREATE OR REPLACE VIEW GameView AS
             SELECT 
