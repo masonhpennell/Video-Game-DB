@@ -6,7 +6,7 @@ def create_tables():
     conn = mysql.connector.connect(
                 host = 'localhost',
                 user = 'root',
-                password = 'mason918'
+                password = 'YourPassword'
             )
     cursor = conn.cursor()
 
@@ -15,7 +15,7 @@ def create_tables():
     conn = mysql.connector.connect(
                 host = 'localhost',
                 user = 'root',
-                password = 'mason918',
+                password = 'YourPassword',
                 database = 'VideoGames'
             )
     cursor = conn.cursor()
@@ -119,7 +119,7 @@ if "initialized" not in st.session_state:
 st.session_state['conn'] = mysql.connector.connect(
             host = 'localhost',
             user = 'root',
-            password = 'mason918',
+            password = 'YourPassword',
             database = 'VideoGames'
         )
 st.session_state['cursor'] = st.session_state['conn'].cursor()
