@@ -1,3 +1,0 @@
-These files have what Teresa implemented, with database creation and tables. 
-Changed to add a an IsDeleted value to Games tables, to check for soft deletion. 
-Added methods to dbs_op to for viewing games that have been deleted, not been, and all regardless.

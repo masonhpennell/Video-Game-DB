@@ -17,8 +17,8 @@ def update(attribute):
         cursor.execute(f"UPDATE Game SET {attribute} = '{value}' WHERE GameID = {id};")
         conn.commit()
 
-col1, col2, col3 = st.columns(3)
 st.write("Which value would you like to update?")
+col1, col2, col3 = st.columns(3)
 with col1:
     if st.button("title", use_container_width=True):
         update("title")

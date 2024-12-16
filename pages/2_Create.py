@@ -18,3 +18,8 @@ if st.button("Create User"):
     cursor.execute(f"INSERT INTO user (name, password) VALUES ('{name}', '{password}');")
     conn.commit()
     st.write(f"User {name} with UserID {user_id + 1} created successfully.")
+    
+cursor.execute(f'SELECT * FROM user;')
+data = cursor.fetchall()
+df = pd.DataFrame(data, columns=cursor.column_names)
+st.table(df)
