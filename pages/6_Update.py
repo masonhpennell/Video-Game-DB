@@ -29,7 +29,7 @@ with col3:
     if st.button("rating", use_container_width=True):
         update("rating")
 
-cursor.execute(f'SELECT gameID, title, genre, rating FROM game WHERE isDeleted = 0 AND gameID = {id};')
+cursor.execute(f'SELECT gameID, title, genre, rating FROM game WHERE gameID = {id};')
 data = cursor.fetchall()
 df = pd.DataFrame(data, columns=cursor.column_names)
 st.table(df)
