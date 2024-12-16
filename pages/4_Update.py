@@ -6,6 +6,16 @@ cursor = st.session_state['cursor']
 
 st.title("Update a game")
 
+# Require login
+if "logged_in" not in st.session_state or not st.session_state.logged_in:
+    st.warning("Please log in to access this page.")
+    st.stop()
+
+conn = st.session_state['conn']
+cursor = st.session_state['cursor']
+
+st.title("Search for a game")
+
 cursor.execute('SELECT COUNT(*) FROM game;')
 max = cursor.fetchone()[0]
 id = st.number_input("Enter game ID", 0, max, 0, 1)
@@ -33,3 +43,4 @@ cursor.execute(f'SELECT gameID, title, genre, rating FROM game WHERE isDeleted =
 data = cursor.fetchall()
 df = pd.DataFrame(data, columns=cursor.column_names)
 st.table(df)
+
