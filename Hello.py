@@ -64,10 +64,10 @@ def create_tables():
             );
         ''')
     
-    # populate_tables('game', cursor)
-    # populate_tables('developer', cursor)
-    # populate_tables('publisher', cursor)
-    # populate_tables('store', cursor)
+    populate_tables('game', cursor)
+    populate_tables('developer', cursor)
+    populate_tables('publisher', cursor)
+    populate_tables('store', cursor)
     populate_tables('user', cursor)
     
     cursor.execute('''
