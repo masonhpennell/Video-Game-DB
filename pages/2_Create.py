@@ -4,17 +4,15 @@ import pandas as pd
 conn = st.session_state['conn']
 cursor = st.session_state['cursor']
 
-st.title("Create a user")
+st.title("Create")
 
-name = st.text_input("Enter Name: ")
-password = st.text_input("Enter Password: ")  # Ask for the password
+# Require login
+if "logged_in" not in st.session_state or not st.session_state.logged_in:
+    st.warning("Please log in to access this page.")
+    st.stop()
 
-# Check if the UserID already exists
-cursor.execute(f"SELECT MAX(userID) FROM user;")
-user_id = cursor.fetchone()[0]
+conn = st.session_state['conn']
+cursor = st.session_state['cursor']
 
-# If UserID is unique, proceed with inserting the new user
-if st.button("Create User"):
-    cursor.execute(f"INSERT INTO user (name, password) VALUES ('{name}', '{password}');")
-    conn.commit()
-    st.write(f"User {name} with UserID {user_id + 1} created successfully.")
+st.title("Search for a game")
+
